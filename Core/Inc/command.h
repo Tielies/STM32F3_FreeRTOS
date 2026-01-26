@@ -8,6 +8,10 @@
 #ifndef INC_COMMAND_H_
 #define INC_COMMAND_H_
 
+#include <stdint.h>
 
+void commandTask(void *argument);
+
+void commandReceiveISR(char *cmd, uint16_t len);
 
 #endif /* INC_COMMAND_H_ */

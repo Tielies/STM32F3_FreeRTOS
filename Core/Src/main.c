@@ -20,6 +20,8 @@
 #include "main.h"
 #include "cmsis_os.h"
 #include "usb_device.h"
+#include "printf.h"
+#include "command.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -54,7 +56,18 @@ const osThreadAttr_t defaultTask_attributes = {
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* USER CODE BEGIN PV */
-
+osThreadId_t commandTaskHandle;
+const osThreadAttr_t commandTask_attributes = {
+  .name = "commandTask",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
+};
+osThreadId_t printfTaskHandle;
+const osThreadAttr_t printfTask_attributes = {
+  .name = "printfTask",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
+};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -134,6 +147,8 @@ int main(void)
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
+  commandTaskHandle = osThreadNew(commandTask, NULL, &commandTask_attributes);
+  printfTaskHandle = osThreadNew(printfTask, NULL, &printfTask_attributes);
 
   /* USER CODE BEGIN RTOS_EVENTS */
   /* add events, ... */

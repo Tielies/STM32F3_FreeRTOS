@@ -23,6 +23,7 @@
 
 /* USER CODE BEGIN INCLUDE */
 #include "printf.h"
+#include "command.h"
 /* USER CODE END INCLUDE */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -265,7 +266,7 @@ static int8_t CDC_Receive_FS(uint8_t* Buf, uint32_t *Len)
   USBD_CDC_SetRxBuffer(&hUsbDeviceFS, &Buf[0]);
   USBD_CDC_ReceivePacket(&hUsbDeviceFS);
   // Send to stream buffer
-
+  commandReceiveISR((char*)Buf, (uint16_t)(*Len));
   return (USBD_OK);
   /* USER CODE END 6 */
 }
