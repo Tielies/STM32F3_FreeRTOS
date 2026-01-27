@@ -27,21 +27,33 @@ void commandTask(void *argument)
   for(;;)
   {
       // Block until we get a command
-      size_t n = xStreamBufferReceive(xStreamBuffer, cmdPtr, 1, portMAX_DELAY);
+      size_t n = xStreamBufferReceive(xStreamBuffer, cmdPtr, 1, 100);
+      if (n != 0) {
+        for (int i = 0; i < n; i++)
+        {
+          // echo back the received character
+          printf("%c", *(cmdPtr + i));
+        }
+      } else {
+    	  continue;
+      }
+      // Advance pointer
       cmdPtr += n;
       if (cmdPtr - cmdBuf >= sizeof(cmdBuf) - 1)
       {
           // Command too long, reset
           printf("Command too long\r\n");
+          // Reset the pointer
           cmdPtr = cmdBuf;
           continue;
       }
-      if (*cmdPtr == '\n' || *cmdPtr == '\r')
+      if (*(cmdPtr - 1) == '\n' || *(cmdPtr - 1) == '\r')
       {
         // Null terminate command
-        *cmdPtr = '\0';
+        *(cmdPtr - 1) = '\0';
         // Process command
         processCommand(cmdBuf, cmdPtr - cmdBuf);
+        // Reset the pointer
         cmdPtr = cmdBuf;
       }
   }

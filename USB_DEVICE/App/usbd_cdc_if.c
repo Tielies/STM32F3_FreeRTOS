@@ -19,10 +19,10 @@
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
+#include "console.h"
 #include "usbd_cdc_if.h"
 
 /* USER CODE BEGIN INCLUDE */
-#include "printf.h"
 #include "command.h"
 /* USER CODE END INCLUDE */
 
@@ -32,7 +32,7 @@
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
-
+static uint8_t usb_ready = 0;
 /* USER CODE END PV */
 
 /** @addtogroup STM32_USB_OTG_DEVICE_LIBRARY
@@ -154,6 +154,7 @@ static int8_t CDC_Init_FS(void)
   /* Set Application Buffers */
   USBD_CDC_SetTxBuffer(&hUsbDeviceFS, UserTxBufferFS, 0);
   USBD_CDC_SetRxBuffer(&hUsbDeviceFS, UserRxBufferFS);
+  usb_ready = 1;
   return (USBD_OK);
   /* USER CODE END 3 */
 }
@@ -165,6 +166,7 @@ static int8_t CDC_Init_FS(void)
 static int8_t CDC_DeInit_FS(void)
 {
   /* USER CODE BEGIN 4 */
+  usb_ready = 0;
   return (USBD_OK);
   /* USER CODE END 4 */
 }
@@ -299,9 +301,18 @@ uint8_t CDC_Transmit_FS(uint8_t* Buf, uint16_t Len)
 /* USER CODE BEGIN PRIVATE_FUNCTIONS_IMPLEMENTATION */
 int _write(int file, char *ptr, int len)
 {
-  return printfSend(ptr, len);
+  return consoleSend(ptr, len);
+}
+// for use by printf-master
+void _putchar(char character)
+{
+  consoleSend(&character, 1);
 }
 
+uint8_t isUsbReady(void)
+{
+    return usb_ready;
+}
 
 /* USER CODE END PRIVATE_FUNCTIONS_IMPLEMENTATION */
 

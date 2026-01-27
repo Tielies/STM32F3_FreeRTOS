@@ -17,10 +17,9 @@
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
+#include "console.h"
 #include "main.h"
 #include "cmsis_os.h"
-#include "usb_device.h"
-#include "printf.h"
 #include "command.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -60,7 +59,7 @@ osThreadId_t commandTaskHandle;
 const osThreadAttr_t commandTask_attributes = {
   .name = "commandTask",
   .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityNormal,
+  .priority = (osPriority_t) osPriorityAboveNormal,
 };
 osThreadId_t printfTaskHandle;
 const osThreadAttr_t printfTask_attributes = {
@@ -148,7 +147,7 @@ int main(void)
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
   commandTaskHandle = osThreadNew(commandTask, NULL, &commandTask_attributes);
-  printfTaskHandle = osThreadNew(printfTask, NULL, &printfTask_attributes);
+  printfTaskHandle = osThreadNew(consoleTask, NULL, &printfTask_attributes);
 
   /* USER CODE BEGIN RTOS_EVENTS */
   /* add events, ... */
@@ -373,8 +372,6 @@ static void MX_GPIO_Init(void)
 /* USER CODE END Header_StartDefaultTask */
 void StartDefaultTask(void *argument)
 {
-  /* init code for USB_DEVICE */
-  MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 5 */
   /* Infinite loop */
   for(;;)
