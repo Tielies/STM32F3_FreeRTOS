@@ -45,15 +45,20 @@ int consoleSend(char *buf, uint16_t len)
 {
     // Check if data being sent from task context
     TaskHandle_t xTask = xTaskGetCurrentTaskHandle();
+    // Add critical section to prevent USB ISR and task context corruption of the stream buffer
     if (xTask)
     {
+        taskENTER_CRITICAL();
         size_t n = xStreamBufferSend(logStream, buf, len, 0);
+        taskEXIT_CRITICAL();
         return n == len ? 0 : -1;
     }
     else
     {
         BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+        taskENTER_CRITICAL();
         size_t n = xStreamBufferSendFromISR(logStream, buf, len, &xHigherPriorityTaskWoken);
+        taskEXIT_CRITICAL();
         portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
         return n == len ? 0 : -1;
     }

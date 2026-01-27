@@ -12,6 +12,8 @@
 #include "stdio.h"
 #include "stdint.h"
 #include "string.h"
+#include "main.h"
+
 
 static void processCommand(char *cmd, uint16_t len);
 
@@ -77,15 +79,23 @@ void commandReceiveISR(char *cmd, uint16_t len)
 static void processCommand(char *cmd, uint16_t len)
 {
     // Simple command processing example
-    if (len >= 4 && strncmp(cmd, "LED1", 4) == 0)
+    if (len >= 4 && strncmp(cmd, "LED4", 4) == 0)
     {
-        // Toggle LED1
-        printf("Toggling LED1\r\n");
+        // Toggle LED6
+        printf("Toggling LED4\r\n");
+        HAL_GPIO_TogglePin(LD4_GPIO_Port, LD4_Pin);
     }
-    else if (len >= 4 && strncmp(cmd, "LED2", 4) == 0)
+    else if (len >= 4 && strncmp(cmd, "LED5", 4) == 0)
     {
-        // Toggle LED2
-        printf("Toggling LED2\r\n");
+        // Toggle LED5
+        printf("Toggling LED5\r\n");
+        HAL_GPIO_TogglePin(LD5_GPIO_Port, LD5_Pin);
+    }
+    else if (len >= 4 && strncmp(cmd, "LED6", 4) == 0)
+    {
+        // Toggle LED6
+        printf("Toggling LED6\r\n");
+        HAL_GPIO_TogglePin(LD6_GPIO_Port, LD6_Pin);
     }
     else
     {
